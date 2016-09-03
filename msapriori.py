@@ -1,10 +1,14 @@
 import re
 
 parameterTextFileName = 'parameter-file.txt'
+inputFile = 'input-data.txt'
+
 dict = {}
 cannotBeTogether = []
 mustHave = []
 minsup = 0
+transactions = []
+items = []
 
 
 def getParameterFromFile(Filename):
@@ -26,4 +30,22 @@ def getParameterFromFile(Filename):
             have = matchMustHave.group(1)
             for s in have.split('or'):
                 mustHave.append(s.strip())
+    parameterText.close()
 
+
+def getInputFromFile(Filename):
+    global transactions
+    inputText = open(Filename)
+    for line in inputText:
+        transactions.append(line.strip('\n').strip('{').strip('}')
+                            .strip().replace(' ', '').split(','))
+
+
+def getItems():
+    global items, transactions
+    for transaction in transactions:
+        for item in transaction:
+            items.append(item)
+    items = set(items)
+getParameterFromFile(parameterTextFileName)
+getInputFromFile(inputFile)
