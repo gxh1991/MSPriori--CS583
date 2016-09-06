@@ -3,16 +3,17 @@ import re
 parameterTextFileName = 'parameter-file.txt'
 inputFile = 'input-data.txt'
 
-dict = {}
-cannotBeTogether = []
-mustHave = []
-minsup = 0
-transactions = []
-items = []
+mis = {}  # dictionary that holds key=item value=mis
+cannotBeTogether = []  # 2 dimension list contains items that cannot be together
+mustHave = []  # must have list
+minsup = 0  # min support specified manually
+transactions = []  # transactions 2-d list
+items = []  # item list in original order. Useful?
+itemsSorted = []  # sorted items by their mis value
 
 
 def getParameterFromFile(Filename):
-    global dict, cannotBeTogether, mustHave, minsup
+    global mis, cannotBeTogether, mustHave, minsup
     parameterText = open(Filename)
     for line in parameterText:
         matchMIS = re.search('\S*\((\d*)\)\D*(\d\.?\d*)', line)
@@ -20,12 +21,17 @@ def getParameterFromFile(Filename):
         matchTogether = re.search('cannot_be_together: {(.*)}', line)
         matchMustHave = re.search('must-have: (.*)', line)
         if matchMIS:
-            dict[matchMIS.group(1)] = matchMIS.group(2)
+            mis[int(matchMIS.group(1))] = float(matchMIS.group(2))
         if matchSDC:
-            minsup = matchSDC.group(1)
+            minsup = float(matchSDC.group(1))
         if matchTogether:
-            together = matchTogether.group(1)
-            cannotBeTogether.append(together.split(','))
+            togetherTmp = matchTogether.group(1)
+            tmp = togetherTmp.replace('{', '').replace(
+                '}', '').replace(' ', '').split('and')
+            for str in tmp:
+                strTmp = str.split(',')
+                strTmp = list(map(int, strTmp))
+                cannotBeTogether.append(strTmp)
         if matchMustHave:
             have = matchMustHave.group(1)
             for s in have.split('or'):
@@ -42,10 +48,29 @@ def getInputFromFile(Filename):
 
 
 def getItems():
-    global items, transactions
+    global transactions
     for transaction in transactions:
         for item in transaction:
             items.append(item)
-    items = set(items)
+    return set(items)
+
+
+def sortItem(mis):
+    return sorted(mis, key=mis.get)
+
+
+def init_pass(_itemsSorted, _mis):
+    for item in _itemsSorted:
+        if(mis[item] > )
+
+
+# ---------------------------------------------------------------------
+#                           pre-prosessing
+# --------------------------------------------------------------------
 getParameterFromFile(parameterTextFileName)
 getInputFromFile(inputFile)
+items = getItems()
+itemsSorted = sortItem(mis)
+# ---------------------------------------------------------------------
+
+L = init_pass(itemsSorted, mis)
