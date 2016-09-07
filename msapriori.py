@@ -41,10 +41,12 @@ def getParameterFromFile(Filename):
 
 def getInputFromFile(Filename):
     global transactions
+    transactionsTmp = []
     inputText = open(Filename)
     for line in inputText:
-        transactions.append(line.strip('\n').strip('{').strip('}')
-                            .strip().replace(' ', '').split(','))
+        transactionsTmp = line.strip('\n').strip(
+            '{').strip('}').strip().replace(' ', '').split(',')
+        transactions.append(list(map(int, transactionsTmp)))
 
 
 def getItems():
@@ -59,9 +61,20 @@ def sortItem(mis):
     return sorted(mis, key=mis.get)
 
 
-def init_pass(_itemsSorted, _mis):
-    for item in _itemsSorted:
-        if(mis[item] > )
+def getSupport(item, _transactions):
+    itemCount = {}
+    for t in _transactions:
+        t = set(t)
+        if item in t:
+            if item in itemCount:
+                itemCount[item] += 1
+            else:
+                itemCount[item] = 1
+    return itemCount
+
+# def init_pass(_itemsSorted, _mis):
+#     for item in _itemsSorted:
+#         if(mis[item] > )
 
 
 # ---------------------------------------------------------------------
