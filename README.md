@@ -11,3 +11,4 @@ e.g., {1, 2, 3} and {6, 7, 9 10}
 e.g., (1 or 2)
 
 The paper of Msapriori can be found on http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.80.4877&rep=rep1&type=pdf
+The instruction of the project can be found here: http://www.cs.uic.edu/~liub/teach/cs583-fall-16/CS583-association-sequential-patterns.ppt (page 46)
