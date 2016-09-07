@@ -6,10 +6,11 @@ inputFile = 'input-data.txt'
 mis = {}  # dictionary that holds key=item value=mis
 cannotBeTogether = []  # 2 dimension list contains items that cannot be together
 mustHave = []  # must have list
-minsup = 0  # min support specified manually
+sdc = 0  # support difference constraint
 transactions = []  # transactions 2-d list
 items = []  # item list in original order. Useful?
 itemsSorted = []  # sorted items by their mis value
+itemSetsCount = {}
 
 
 def getParameterFromFile(Filename):
@@ -23,7 +24,7 @@ def getParameterFromFile(Filename):
         if matchMIS:
             mis[int(matchMIS.group(1))] = float(matchMIS.group(2))
         if matchSDC:
-            minsup = float(matchSDC.group(1))
+            sdc = float(matchSDC.group(1))
         if matchTogether:
             togetherTmp = matchTogether.group(1)
             tmp = togetherTmp.replace('{', '').replace(
@@ -44,8 +45,8 @@ def getInputFromFile(Filename):
     transactionsTmp = []
     inputText = open(Filename)
     for line in inputText:
-        transactionsTmp = line.strip('\n').strip(
-            '{').strip('}').strip().replace(' ', '').split(',')
+        transactionsTmp = line.strip('\n').replace(
+            '{', '').replace('}', '').strip().replace(' ', '').split(',')
         transactions.append(list(map(int, transactionsTmp)))
 
 
@@ -62,19 +63,55 @@ def sortItem(mis):
 
 
 def getSupport(item, _transactions):
-    itemCount = {}
+    global itemSetsCount
+    count = 0
     for t in _transactions:
         t = set(t)
         if item in t:
             if item in itemCount:
-                itemCount[item] += 1
+                itemSetsCount[item] += 1
+                count += 1
             else:
-                itemCount[item] = 1
-    return itemCount
+                itemSetsCount[item] = 1
+                count += 1
+    return count / len(_transactions)
 
-# def init_pass(_itemsSorted, _mis):
-#     for item in _itemsSorted:
-#         if(mis[item] > )
+
+def init_pass(_itemsSorted, _mis):
+    global transactions
+    L = []
+    for item in _itemsSorted:
+        if(mis[item] <= getSupport(item, transactions)):
+            L.append(item)
+    return L
+
+
+def level2_Candidate_Gen(_itemsSorted, _sdc):
+    global itemSetsCount, transactions
+    c2 = []
+    for i in range(len(_itemsSorted)):
+        item = _itemsSorted[i]
+        if(itemSetsCount[item] >= mis[item]):
+            for j in range(i + 1, len(_itemsSorted)):
+                item2 = _itemsSorted[j]
+                if(abs((itemSetsCount[item1] - itemSetsCount[item2]) / len(transactions)) <= _sdc):
+                    c2.append([item, item2])
+
+
+def msCandidate_Gen(f,_sdc):
+    for i in range(len(f)):
+        for j in range(i+1,len(f)):
+
+
+def isDifferOne(f1, f2):
+    if(len(f1) != len(f2)):
+        return False
+    for i in range(len(f1) - 1):
+        if(f1[i] != f2[i]):
+            return False
+    if(f1[len(f1) - 1] == f2[len(f1) - 1]):
+        print("Error: f1 and f2 are exactly the same!!! Check function isDifferOne(f1,f2)")
+        return False
 
 
 # ---------------------------------------------------------------------
@@ -86,4 +123,10 @@ items = getItems()
 itemsSorted = sortItem(mis)
 # ---------------------------------------------------------------------
 
-L = init_pass(itemsSorted, mis)
+F = init_pass(itemsSorted, mis)
+k = 2
+while F:
+    if k = 2:
+        c = level2_Candidate_Gen(itemsSorted,sdc)
+    else:
+        c = 
