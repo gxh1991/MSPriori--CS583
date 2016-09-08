@@ -99,8 +99,11 @@ def level2_Candidate_Gen(_itemsSorted, _sdc):
 
 
 def msCandidate_Gen(f,_sdc):
+    c = []
     for i in range(len(f)):
-        for j in range(i+1,len(f)):
+        for j in range(i + 1, len(f)):
+            if(isDifferOne(f(i), f(j))):
+                c.append(set(f(i).append(f(j))))
 
 
 def isDifferOne(f1, f2):
@@ -114,6 +117,12 @@ def isDifferOne(f1, f2):
         return False
 
 
+def isListContains(_sub, _list):
+    for item in _sub:
+        if item not in _list:
+            return False
+    return True
+
 # ---------------------------------------------------------------------
 #                           pre-prosessing
 # --------------------------------------------------------------------
@@ -126,7 +135,12 @@ itemsSorted = sortItem(mis)
 F = init_pass(itemsSorted, mis)
 k = 2
 while F:
-    if k = 2:
-        c = level2_Candidate_Gen(itemsSorted,sdc)
+    if k == 2:
+        candidates = level2_Candidate_Gen(itemsSorted, sdc)
     else:
-        c = 
+        candidates = msCandidate_Gen(F, sdc)
+    for t in transactions:
+        for c in candidates:
+            if(isListContains(c,t)):
+                
+
