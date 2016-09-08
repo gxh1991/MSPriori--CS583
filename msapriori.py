@@ -11,6 +11,7 @@ transactions = []  # transactions 2-d list
 items = []  # item list in original order. Useful?
 itemsSorted = []  # sorted items by their mis value
 itemSetsCount = {}
+numberOfTransaction = 0
 
 
 def getParameterFromFile(Filename):
@@ -38,6 +39,13 @@ def getParameterFromFile(Filename):
             for s in have.split('or'):
                 mustHave.append(s.strip())
     parameterText.close()
+
+
+def isListContains(_sub, _list):
+    for item in _sub:
+        if item not in _list:
+            return False
+    return True
 
 
 def getInputFromFile(Filename):
@@ -77,6 +85,18 @@ def getSupport(item, _transactions):
     return count / len(_transactions)
 
 
+def getItemsSupport(itemSet):
+    global transactions
+    itemsCount = {}
+    for item in itemSet:
+        count = 0
+        for t in transactions:
+            if(isListContains(item, t)):
+                count += 1
+        itemsCount[item] = count
+    return itemsCount
+
+
 def init_pass(_itemsSorted, _mis):
     global transactions
     L = []
@@ -98,12 +118,29 @@ def level2_Candidate_Gen(_itemsSorted, _sdc):
                     c2.append([item, item2])
 
 
-def msCandidate_Gen(f,_sdc):
+def getK_1Subsets(candidate):
+    result = []
+    for c in candidate:
+        l = list(candidate)
+        l.remove(c)
+        result.append(l)
+    return result
+
+def msCandidate_Gen(f, _sdc):
     c = []
+    c_small = []
     for i in range(len(f)):
         for j in range(i + 1, len(f)):
-            if(isDifferOne(f(i), f(j))):
-                c.append(set(f(i).append(f(j))))
+            if(isDifferOne(f(i), f(j))) and
+            abs(getItemsSupport(f(i)) - getItemsSupport(f(j))) / len(transactions) <= sdc:
+                c_small = set(f(i).append(f(j)))
+                c.append(c_small)
+            subsets = getK_1Subsets(c)
+            for subset in subsets:
+                if(c_small[0] in subset) or (mis[c_small[1]] == mis[c_small[2]]):
+                    if not (isListContains(subset, k)):
+                        c.remove(c_small)
+    return c
 
 
 def isDifferOne(f1, f2):
@@ -117,12 +154,6 @@ def isDifferOne(f1, f2):
         return False
 
 
-def isListContains(_sub, _list):
-    for item in _sub:
-        if item not in _list:
-            return False
-    return True
-
 # ---------------------------------------------------------------------
 #                           pre-prosessing
 # --------------------------------------------------------------------
@@ -130,17 +161,35 @@ getParameterFromFile(parameterTextFileName)
 getInputFromFile(inputFile)
 items = getItems()
 itemsSorted = sortItem(mis)
+numberOfTransaction = len(transactions)
 # ---------------------------------------------------------------------
 
 F = init_pass(itemsSorted, mis)
 k = 2
+frequentSetS = []
 while F:
+    frequentSetS.append(list(F))
+    F = []
     if k == 2:
         candidates = level2_Candidate_Gen(itemsSorted, sdc)
     else:
         candidates = msCandidate_Gen(F, sdc)
-    for t in transactions:
-        for c in candidates:
-            if(isListContains(c,t)):
-                
+    for c in candidates:
+        count = 0
+        count2 = 0
+        tmp = list(c)
+        tmp.remove(tmp[0])
+        for t in transactions:
+            if(isListContains(c, t)):
+                count += 1
+            if(isListContains(tmp, t)):
+                count2 += 1
+        itemSetsCounts[c] = count
+        itemSetsCounts[tmp] = count2
+        if(count / numberOfTransaction >= mis[c]):
+            F.append(c)
+        if(count2 / numberOfTransaction >= mis[tmp]):
+            F.append(tmp)  # Is it correct? tmp has only k-1 items
+
+
 
