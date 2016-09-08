@@ -11,6 +11,7 @@ transactions = []  # transactions 2-d list
 items = []  # item list in original order. Useful?
 itemsSorted = []  # sorted items by their mis value
 itemSetsCount = {}
+itemSetsTailCount = {}
 numberOfTransaction = 0
 
 
@@ -76,7 +77,7 @@ def getSupport(item, _transactions):
     for t in _transactions:
         t = set(t)
         if item in t:
-            if item in itemCount:
+            if item in itemSetsCount:
                 itemSetsCount[item] += 1
                 count += 1
             else:
@@ -98,9 +99,10 @@ def getItemsSupport(itemSet):
 
 
 def init_pass(_itemsSorted, _mis):
-    global transactions
+    global transactions, itemSetsCount
     L = []
     for item in _itemsSorted:
+        itemSetsCount[item] = getSupport(item, transactions)
         if(mis[item] <= getSupport(item, transactions)):
             L.append(item)
     return L
@@ -114,7 +116,7 @@ def level2_Candidate_Gen(_itemsSorted, _sdc):
         if(itemSetsCount[item] >= mis[item]):
             for j in range(i + 1, len(_itemsSorted)):
                 item2 = _itemsSorted[j]
-                if(abs((itemSetsCount[item1] - itemSetsCount[item2]) / len(transactions)) <= _sdc):
+                if(abs((itemSetsCount[item] - itemSetsCount[item2]) / len(transactions)) <= _sdc):
                     c2.append([item, item2])
 
 
@@ -126,13 +128,13 @@ def getK_1Subsets(candidate):
         result.append(l)
     return result
 
+
 def msCandidate_Gen(f, _sdc):
     c = []
     c_small = []
     for i in range(len(f)):
         for j in range(i + 1, len(f)):
-            if(isDifferOne(f(i), f(j))) and
-            abs(getItemsSupport(f(i)) - getItemsSupport(f(j))) / len(transactions) <= sdc:
+            if(isDifferOne(f(i), f(j)) and (abs(getItemsSupport(f(i)) - getItemsSupport(f(j))) / len(transactions) <= sdc)):
                 c_small = set(f(i).append(f(j)))
                 c.append(c_small)
             subsets = getK_1Subsets(c)
@@ -169,11 +171,12 @@ k = 2
 frequentSetS = []
 while F:
     frequentSetS.append(list(F))
-    F = []
     if k == 2:
         candidates = level2_Candidate_Gen(itemsSorted, sdc)
     else:
         candidates = msCandidate_Gen(F, sdc)
+    k += 1
+    F = []
     for c in candidates:
         count = 0
         count2 = 0
@@ -185,11 +188,9 @@ while F:
             if(isListContains(tmp, t)):
                 count2 += 1
         itemSetsCounts[c] = count
-        itemSetsCounts[tmp] = count2
+        itemSetsTailCount[tmp] = count2
         if(count / numberOfTransaction >= mis[c]):
             F.append(c)
-        if(count2 / numberOfTransaction >= mis[tmp]):
-            F.append(tmp)  # Is it correct? tmp has only k-1 items
 
 
 
