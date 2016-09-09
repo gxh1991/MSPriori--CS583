@@ -72,16 +72,13 @@ def sortItem(mis):
 
 
 def getSupport(item, _transactions):
-    global itemSetsCount
     count = 0
     for t in _transactions:
         t = set(t)
         if item in t:
             if item in itemSetsCount:
-                itemSetsCount[item] += 1
                 count += 1
             else:
-                itemSetsCount[item] = 1
                 count += 1
     return count / len(_transactions)
 
@@ -102,7 +99,7 @@ def init_pass(_itemsSorted, _mis):
     global transactions, itemSetsCount
     L = []
     for item in _itemsSorted:
-        itemSetsCount[item] = getSupport(item, transactions)
+        itemSetsCount[item] = getSupport(item, transactions) * len(transactions)
         if(mis[item] <= getSupport(item, transactions)):
             L.append(item)
     return L
