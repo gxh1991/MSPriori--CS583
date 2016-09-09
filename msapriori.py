@@ -43,8 +43,12 @@ def getParameterFromFile(Filename):
 
 
 def isListContains(_sub, _list):
-    for item in _sub:
-        if item not in _list:
+    if(isinstance(_sub, list)):
+        for item in _sub:
+            if item not in _list:
+                return False
+    else:
+        if _sub not in _list:
             return False
     return True
 
@@ -86,10 +90,10 @@ def getItemsSupport(itemSet):
     for item in itemSet:
         count = 0
         for t in transactions:
-            if(isListContains(list(item), t)):
+            if(isListContains(item, t)):
                 count += 1
         itemsCount[item] = count
-    return itemsCount
+    return count
 
 
 def init_pass(_itemsSorted, _mis):
@@ -129,8 +133,8 @@ def msCandidate_Gen(f, _sdc):
     c_small = []
     for i in range(len(f)):
         for j in range(i + 1, len(f)):
-            if isDifferOne(f(i),f(j)) and abs(getItemsSupport(f(i)) - getItemsSupport(f(j))) / numberOfTransaction <= sdc:
-                c_small = set(f(i).append(f(j)))
+            if isDifferOne(f[i], f[j]) and abs(getItemsSupport(f[i]) - getItemsSupport(f[j])) / numberOfTransaction <= sdc:
+                c_small = list(set(f[i] + f[j]))
                 c.append(c_small)
             subsets = getK_1Subsets(c)
             for subset in subsets:
@@ -166,7 +170,7 @@ F = init_pass(itemsSorted, mis)
 k = 2
 frequentSetS = []
 while F:
-    frequentSetS.append(list(F))
+    frequentSetS += list(F)
     if k == 2:
         candidates = level2_Candidate_Gen(itemsSorted, sdc)
     else:
