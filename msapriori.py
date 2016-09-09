@@ -76,10 +76,7 @@ def getSupport(item, _transactions):
     for t in _transactions:
         t = set(t)
         if item in t:
-            if item in itemSetsCount:
-                count += 1
-            else:
-                count += 1
+            count += 1
     return count / len(_transactions)
 
 
@@ -110,11 +107,12 @@ def level2_Candidate_Gen(_itemsSorted, _sdc):
     c2 = []
     for i in range(len(_itemsSorted)):
         item = _itemsSorted[i]
-        if(itemSetsCount[item] >= mis[item]):
+        if(itemSetsCount[item] / numberOfTransaction >= mis[item]):
             for j in range(i + 1, len(_itemsSorted)):
                 item2 = _itemsSorted[j]
                 if(abs((itemSetsCount[item] - itemSetsCount[item2]) / len(transactions)) <= _sdc):
                     c2.append([item, item2])
+    return c2
 
 
 def getK_1Subsets(candidate):
@@ -184,7 +182,7 @@ while F:
                 count += 1
             if(isListContains(tmp, t)):
                 count2 += 1
-        itemSetsCounts[c] = count
+        itemSetsCount[tuple(c)] = count  # since list cannot be a key of a dictionary, i replaced it by tuple. Need double check!!!!!!!!!!
         itemSetsTailCount[tmp] = count2
         if(count / numberOfTransaction >= mis[c]):
             F.append(c)
