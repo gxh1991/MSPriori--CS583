@@ -16,7 +16,7 @@ numberOfTransaction = 0
 
 
 def getParameterFromFile(Filename):
-    global mis, cannotBeTogether, mustHave, minsup
+    global mis, cannotBeTogether, mustHave, minsup, sdc
     parameterText = open(Filename)
     for line in parameterText:
         matchMIS = re.search('\S*\((\d*)\)\D*(\d\.?\d*)', line)
@@ -86,7 +86,7 @@ def getItemsSupport(itemSet):
     for item in itemSet:
         count = 0
         for t in transactions:
-            if(isListContains(item, t)):
+            if(isListContains(list(item), t)):
                 count += 1
         itemsCount[item] = count
     return itemsCount
@@ -129,7 +129,7 @@ def msCandidate_Gen(f, _sdc):
     c_small = []
     for i in range(len(f)):
         for j in range(i + 1, len(f)):
-            if(isDifferOne(f(i), f(j)) and (abs(getItemsSupport(f(i)) - getItemsSupport(f(j))) / len(transactions) <= sdc)):
+            if isDifferOne(f(i),f(j)) and abs(getItemsSupport(f(i)) - getItemsSupport(f(j))) / numberOfTransaction <= sdc:
                 c_small = set(f(i).append(f(j)))
                 c.append(c_small)
             subsets = getK_1Subsets(c)
@@ -149,6 +149,7 @@ def isDifferOne(f1, f2):
     if(f1[len(f1) - 1] == f2[len(f1) - 1]):
         print("Error: f1 and f2 are exactly the same!!! Check function isDifferOne(f1,f2)")
         return False
+    return True
 
 
 # ---------------------------------------------------------------------
@@ -183,8 +184,8 @@ while F:
             if(isListContains(tmp, t)):
                 count2 += 1
         itemSetsCount[tuple(c)] = count  # since list cannot be a key of a dictionary, i replaced it by tuple. Need double check!!!!!!!!!!
-        itemSetsTailCount[tmp] = count2
-        if(count / numberOfTransaction >= mis[c]):
+        itemSetsTailCount[tuple(tmp)] = count2  # this line too!!!!
+        if(count / numberOfTransaction >= mis[c[0]]):
             F.append(c)
 
 
