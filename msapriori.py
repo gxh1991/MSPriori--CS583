@@ -136,13 +136,16 @@ def msCandidate_Gen(f, _sdc):
     for i in range(len(f)):
         for j in range(i + 1, len(f)):
             if isDifferOne(f[i], f[j]) and abs(getItemsSupport(f[i]) - getItemsSupport(f[j])) / numberOfTransaction <= sdc:
-                c_small = list(set(f[i] + f[j]))
+                tmp = list(f[i])
+                tmp.append(f[j][-1])
+                c_small = tmp
                 c.append(c_small)
-            subsets = getK_1Subsets(c)
-            for subset in subsets:
-                if(c_small[0] in subset) or (mis[c_small[1]] == mis[c_small[2]]):
-                    if not (isListContains(subset, k)):
-                        c.remove(c_small)
+                subsets = getK_1Subsets(c_small)
+                for subset in subsets:
+                    if(c_small[0] in subset) or (mis[c_small[0]] == mis[c_small[1]]):
+                        if subset not in frequentSets:
+                            if c_small in c:
+                                c.remove(c_small)
     return c
 
 
@@ -171,9 +174,9 @@ numberOfTransaction = len(transactions)
 F = init_pass(itemsSorted, mis)
 
 k = 2
-frequentSetS = []
+frequentSets = []
 while F:
-    frequentSetS += list(F)
+    frequentSets += list(F)
     if k == 2:
         candidates = level2_Candidate_Gen(itemsSorted, sdc)
     else:
