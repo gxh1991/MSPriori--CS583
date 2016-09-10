@@ -199,4 +199,4 @@ while F:
             F.append(c)
 
 
-
+print(frequentSets)
