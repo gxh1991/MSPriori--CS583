@@ -4,7 +4,8 @@ parameterTextFileName = 'parameter-file.txt'
 inputFile = 'input-data.txt'
 
 mis = {}  # dictionary that holds key=item value=mis
-cannotBeTogether = []  # 2 dimension list contains items that cannot be together
+cannotBeTogether = []  # list contains items that cannot be together
+cannotBeTogetherSets = []
 mustHave = []  # must have list
 sdc = 0  # support difference constraint
 transactions = []  # transactions 2-d list
@@ -33,12 +34,11 @@ def getParameterFromFile(Filename):
                 '}', '').replace(' ', '').split('and')
             for str in tmp:
                 strTmp = str.split(',')
-                strTmp = list(map(int, strTmp))
-                cannotBeTogether.append(strTmp)
+                cannotBeTogether = list(map(int, strTmp))
         if matchMustHave:
             have = matchMustHave.group(1)
             for s in have.split('or'):
-                mustHave.append(s.strip())
+                mustHave.append(int(s.strip()))
     parameterText.close()
 
 
@@ -124,9 +124,9 @@ def level2_Candidate_Gen(_itemsSorted, _sdc):
 def getK_1Subsets(candidate):
     result = []
     for c in candidate:
-        l = list(candidate)
-        l.remove(c)
-        result.append(l)
+        lst = list(candidate)
+        lst.remove(c)
+        result.append(lst)
     return result
 
 
@@ -161,6 +161,47 @@ def isDifferOne(f1, f2):
     return True
 
 
+def getPairSets(_cannotBeTogether):
+    _cannotBeTogether = sortListByMis(_cannotBeTogether)
+    result = []
+    for i in range(0, len(_cannotBeTogether) - 1):
+        for j in range(i + 1, len(_cannotBeTogether)):
+            tmp = [_cannotBeTogether[i], _cannotBeTogether[j]]
+            result.append(tmp)
+    return result
+
+
+def sortListByMis(l):
+    global itemsSorted
+    return sorted(l, key=itemsSorted.index)
+
+
+def mustHaveFilter(itemSets):
+    global mustHave
+    removes = []
+    for i in itemSets:
+        haveFlg = False
+        for j in mustHave:
+            if j in i:
+                haveFlg = True
+                break
+        if not haveFlg:
+            removes.append(i)
+    for i in removes:
+        itemSets.remove(i)
+
+
+def cannotBetogetherFilter(itemSets):
+    global cannotBeTogetherSets
+    removes = []
+    for i in itemSets:
+        for j in cannotBeTogetherSets:
+            if isListContains(j, i):
+                removes.append(i)
+                break
+    for i in removes:
+        itemSets.remove(i)
+
 # ---------------------------------------------------------------------
 #                           pre-prosessing
 # --------------------------------------------------------------------
@@ -169,6 +210,8 @@ getInputFromFile(inputFile)
 items = getItems()
 itemsSorted = sortItem(mis)
 numberOfTransaction = len(transactions)
+cannotBeTogetherSets = getPairSets(cannotBeTogether)
+mustHave = sortListByMis(mustHave)
 # ---------------------------------------------------------------------
 
 F = init_pass(itemsSorted, mis)
@@ -198,5 +241,7 @@ while F:
         if(count / numberOfTransaction >= mis[c[0]]):
             F.append(c)
 
-
+mustHaveFilter(frequentSets)
+cannotBetogetherFilter(frequentSets)
 print(frequentSets)
+
