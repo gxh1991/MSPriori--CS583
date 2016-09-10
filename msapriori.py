@@ -102,7 +102,9 @@ def init_pass(_itemsSorted, _mis):
     for item in _itemsSorted:
         itemSetsCount[item] = getSupport(item, transactions) * len(transactions)
         if(mis[item] <= getSupport(item, transactions)):
-            L.append(item)
+            tmp = []
+            tmp.append(item)
+            L.append(tmp)
     return L
 
 
@@ -167,6 +169,7 @@ numberOfTransaction = len(transactions)
 # ---------------------------------------------------------------------
 
 F = init_pass(itemsSorted, mis)
+
 k = 2
 frequentSetS = []
 while F:
