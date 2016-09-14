@@ -12,6 +12,7 @@ transactions = []  # transactions 2-d list
 items = []  # item list in original order. Useful?
 itemsSorted = []  # sorted items by their mis value
 itemSetsCount = {}
+itemSetsCountFinal = {}
 itemSetsTailCount = {}
 numberOfTransaction = 0
 
@@ -97,11 +98,14 @@ def getItemsSupport(itemSet):
 
 
 def init_pass(_itemsSorted, _mis):
-    global transactions, itemSetsCount
+    global transactions, itemSetsCount, itemSetsCountFinal
     L = []
     for item in _itemsSorted:
         itemSetsCount[item] = getSupport(
             item, transactions) * len(transactions)
+        tmpList = []
+        tmpList.append(item)
+        itemSetsCountFinal[tuple(tmpList)] = int(itemSetsCount[item])
         if(mis[item] <= getSupport(item, transactions)):
             tmp = []
             tmp.append(item)
@@ -240,7 +244,7 @@ while F:
             if(isListContains(tmp, t)):
                 count2 += 1
         # since list cannot be a key of a dictionary, i replaced it by tuple. N
-        itemSetsCount[tuple(c)] = count
+        itemSetsCountFinal[tuple(c)] = count
         itemSetsTailCount[tuple(c)] = count2  # this line too!!!!
         if(count / numberOfTransaction >= mis[c[0]]):
             F.append(c)
@@ -254,10 +258,35 @@ for i in frequentSets2:
 
 
 print(frequentSets)
-print(frequentSets2)
-
 
 # --------------------------------------------------------------------------
 # Generating output
 # --------------------------------------------------------------------------
-# def printOutput(_frequentSets, _itemSetsTailCount):
+
+
+# class OutputPattern:
+#     sizeOfFrequenSet = 0
+#     frequentSet = []
+#     frequenctCount = []
+#     frequenctTailCount = []
+
+#     def addItemSet(self, _itemSet, _count, _tailCount):
+#         self.frequentSet.append(_itemSet)
+#         self.frequenctCount.append(_count)
+#         self.frequenctTailCount.append(_tailCount)
+#         self.sizeOfFrequenSet = len(_itemSet)
+
+#     def fixBracet(str):
+#         return str.replace('(', '{').replace(')', '}')
+
+#     def getOutput(self):
+#         result = ''
+#         if self.sizeOfFrequenSet == 0:
+#             return
+#         else:
+#             result += 'Frequent ' + str(self.sizeOfFrequenSet) + '-itemsets\n'
+#             for i in range(frequentSets):
+#                 result += '\t'
+#                 result += str(frequenctCount[i]) + ' ' + ': ' + 
+
+
