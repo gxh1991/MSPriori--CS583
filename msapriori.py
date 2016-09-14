@@ -259,6 +259,33 @@ for i in frequentSets2:
 
 print(frequentSets)
 
+text_file = open("output.txt", "w+")
+currentLen = 0
+nItemSetNumber = 0
+for itemSet in frequentSets:
+    if(len(itemSet)>currentLen):
+        if(currentLen!=0):
+            text_file.write("\n\tTotal number of frequent %d-itemsets = " % currentLen)
+            text_file.write("%d \n \n \n" % nItemSetNumber)
+        nItemSetNumber = 0
+        currentLen = len(itemSet)
+        text_file.write("Frequent %d-itemsets\n\n" % currentLen)
+    text_file.write("\t%d : {" % itemSetsCountFinal[tuple(itemSet)])
+    if(len(itemSet)==1):
+        text_file.write("%d}\n" % itemSet[0])
+        nItemSetNumber = nItemSetNumber + 1
+        continue
+    for i in range(len(itemSet)):
+        if(i==len(itemSet)-1):
+            text_file.write("%d}\n" %itemSet[i])
+        else:
+            text_file.write("%d, " % itemSet[i])
+    text_file.write("TailCount = %d\n" % itemSetsTailCount[tuple(itemSet)])
+    nItemSetNumber = nItemSetNumber + 1
+text_file.write("\n\tTotal number of frequent %d-itemsets = " % currentLen)
+text_file.write("%d" % nItemSetNumber)
+text_file.close
+
 # --------------------------------------------------------------------------
 # Generating output
 # --------------------------------------------------------------------------
