@@ -100,7 +100,8 @@ def init_pass(_itemsSorted, _mis):
     global transactions, itemSetsCount
     L = []
     for item in _itemsSorted:
-        itemSetsCount[item] = getSupport(item, transactions) * len(transactions)
+        itemSetsCount[item] = getSupport(
+            item, transactions) * len(transactions)
         if(mis[item] <= getSupport(item, transactions)):
             tmp = []
             tmp.append(item)
@@ -218,8 +219,10 @@ F = init_pass(itemsSorted, mis)
 
 k = 2
 frequentSets = []
+frequentSets2 = []
 while F:
     frequentSets += list(F)
+    frequentSets2.append(F)
     if k == 2:
         candidates = level2_Candidate_Gen(itemsSorted, sdc)
     else:
@@ -236,12 +239,25 @@ while F:
                 count += 1
             if(isListContains(tmp, t)):
                 count2 += 1
-        itemSetsCount[tuple(c)] = count  # since list cannot be a key of a dictionary, i replaced it by tuple. Need double check!!!!!!!!!!
-        itemSetsTailCount[tuple(tmp)] = count2  # this line too!!!!
+        # since list cannot be a key of a dictionary, i replaced it by tuple. N
+        itemSetsCount[tuple(c)] = count
+        itemSetsTailCount[tuple(c)] = count2  # this line too!!!!
         if(count / numberOfTransaction >= mis[c[0]]):
             F.append(c)
 
 mustHaveFilter(frequentSets)
 cannotBetogetherFilter(frequentSets)
-print(frequentSets)
 
+for i in frequentSets2:
+    mustHaveFilter(i)
+    cannotBetogetherFilter(i)
+
+
+print(frequentSets)
+print(frequentSets2)
+
+
+# --------------------------------------------------------------------------
+# Generating output
+# --------------------------------------------------------------------------
+# def printOutput(_frequentSets, _itemSetsTailCount):
