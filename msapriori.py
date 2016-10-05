@@ -1,7 +1,7 @@
 import re
 
-parameterTextFileName = 'parameter-file.txt'
-inputFile = 'input-data.txt'
+parameterTextFileName = 'para1-2.txt'
+inputFile = 'data-1.txt'
 
 mis = {}  # dictionary that holds key=item value=mis
 cannotBeTogether = []  # list contains items that cannot be together
@@ -88,11 +88,14 @@ def getSupport(item, _transactions):
 def getItemsSupport(itemSet):
     global transactions
     itemsCount = {}
-    for item in itemSet:
+    for t in transactions:
         count = 0
-        for t in transactions:
-            if(isListContains(item, t)):
-                count += 1
+        flg = 1
+        for item in itemSet:
+            if not (isListContains(item, t)):
+                flg = 0
+        if(flg == 1):
+            count += 1
         itemsCount[item] = count
     return count
 
@@ -140,7 +143,11 @@ def msCandidate_Gen(f, _sdc):
     c_small = []
     for i in range(len(f)):
         for j in range(i + 1, len(f)):
-            if isDifferOne(f[i], f[j]) and abs(getItemsSupport(f[i]) - getItemsSupport(f[j])) / numberOfTransaction <= sdc:
+            ttt1 = [60,20]
+            ttt2 = [60,50]
+            if f[i] == ttt1 and f[j] == ttt2:
+                ii = 1
+            if isDifferOne(f[i], f[j]) and abs(getSupport(f[i][-1],transactions) - getSupport(f[j][-1],transactions)) <= sdc:
                 tmp = list(f[i])
                 tmp.append(f[j][-1])
                 c_small = tmp
@@ -259,6 +266,11 @@ for i in frequentSets2:
 
 print(frequentSets)
 
+# --------------------------------------------------------------------------
+# Generating output
+# --------------------------------------------------------------------------
+
+
 text_file = open("output.txt", "w+")
 currentLen = 0
 nItemSetNumber = 0
@@ -285,35 +297,4 @@ for itemSet in frequentSets:
 text_file.write("\n\tTotal number of frequent %d-itemsets = " % currentLen)
 text_file.write("%d" % nItemSetNumber)
 text_file.close
-
-# --------------------------------------------------------------------------
-# Generating output
-# --------------------------------------------------------------------------
-
-
-# class OutputPattern:
-#     sizeOfFrequenSet = 0
-#     frequentSet = []
-#     frequenctCount = []
-#     frequenctTailCount = []
-
-#     def addItemSet(self, _itemSet, _count, _tailCount):
-#         self.frequentSet.append(_itemSet)
-#         self.frequenctCount.append(_count)
-#         self.frequenctTailCount.append(_tailCount)
-#         self.sizeOfFrequenSet = len(_itemSet)
-
-#     def fixBracet(str):
-#         return str.replace('(', '{').replace(')', '}')
-
-#     def getOutput(self):
-#         result = ''
-#         if self.sizeOfFrequenSet == 0:
-#             return
-#         else:
-#             result += 'Frequent ' + str(self.sizeOfFrequenSet) + '-itemsets\n'
-#             for i in range(frequentSets):
-#                 result += '\t'
-#                 result += str(frequenctCount[i]) + ' ' + ': ' + 
-
 
