@@ -23,7 +23,7 @@ The instruction of the project can be found here: http://www.cs.uic.edu/~liub/te
 
 ## How to run:  
 
-     1.change the *'parameterTextFileName'* and *'inputFile'* path variable in msapriori.py file.     
+     1.change the 'parameterTextFileName' and 'inputFile' path variable in msapriori.py file.     
      -- test data files are in data directory    
  
      2.run python3 msapriori.py. Frequent sets will be printed in terminal. Output file will be generated in the same directory of  msapriori.py   
